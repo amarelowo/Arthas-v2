@@ -31,8 +31,8 @@ void loop() {
     //formato do dado recebido
     //     kP     ki      kD
     // 000.000;000.000;000.000
-    if(valorRecebido == "estado_a"){
-      Serial.println(valorRecebido);
+    if(valorRecebido == "estado_a" || valorRecebido == "Cliente Conectado!"){
+      // Serial.println(valorRecebido);
       SerialBT.println(valorRecebido);
     }
     else{
@@ -45,11 +45,14 @@ void loop() {
       if((kP + kI + kD) < 100){
         Serial.println("parece que deu certo essa bucetona aqui");
       }
-      Serial.print(kP);
+
+      // prova real de que o numero está chegando inteiro
+
+      Serial.print(kP, 6);
       Serial.print(" | ");
-      Serial.print(kI);
+      Serial.print(kI, 6);
       Serial.print(" | ");
-      Serial.println(kD);
+      Serial.println(kD, 6);
       SerialBT.println("PID recebido vlw men");
 
     }
