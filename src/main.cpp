@@ -26,18 +26,32 @@ void loop() {
   if (SerialBT.available()){
     valorRecebido = SerialBT.readString();
     Serial.println(valorRecebido);
+    // SerialBT.println(valorRecebido);
+
+    //formato do dado recebido
+    //     kP     ki      kD
+    // 000.000;000.000;000.000
     if(valorRecebido == "estado_a"){
-      digitalWrite(ledVermelho, HIGH);
+      Serial.println(valorRecebido);
+      SerialBT.println(valorRecebido);
     }
-    if(valorRecebido == "0;0;0"){
-      digitalWrite(ledAmarelo, HIGH);
+    else{
+      String stgkP = valorRecebido.substring(0,7);
+      double kP = stgkP.toDouble();
+      String stgkI = valorRecebido.substring(8,15);
+      double kI = stgkI.toDouble();
+      String stgkD = valorRecebido.substring(16,23);
+      double kD = stgkD.toDouble();
+      if((kP + kI + kD) < 100){
+        Serial.println("parece que deu certo essa bucetona aqui");
+      }
+      Serial.print(kP);
+      Serial.print(" | ");
+      Serial.print(kI);
+      Serial.print(" | ");
+      Serial.println(kD);
+      SerialBT.println("PID recebido vlw men");
+
     }
-    if(valorRecebido == "1;1;1"){
-      digitalWrite(ledVermelho, LOW);
-    }
-    if(valorRecebido == "2;2;2"){
-      digitalWrite(ledAmarelo, LOW);
-    }
-    SerialBT.write(3);
   }
 }
