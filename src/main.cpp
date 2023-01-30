@@ -26,16 +26,16 @@ void loop() {
   if (SerialBT.available()){
     valorRecebido = SerialBT.readString();
     Serial.println(valorRecebido);
-    if(valorRecebido == "lv"){
+    if(valorRecebido == "estado_a"){
       digitalWrite(ledVermelho, HIGH);
     }
-    if(valorRecebido == "la"){
+    if(valorRecebido == "0;0;0"){
       digitalWrite(ledAmarelo, HIGH);
     }
-    if(valorRecebido == "dv"){
+    if(valorRecebido == "1;1;1"){
       digitalWrite(ledVermelho, LOW);
     }
-    if(valorRecebido == "da"){
+    if(valorRecebido == "2;2;2"){
       digitalWrite(ledAmarelo, LOW);
     }
     SerialBT.write(3);
