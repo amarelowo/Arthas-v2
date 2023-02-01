@@ -31,8 +31,11 @@ void loop() {
     //formato do dado recebido
     //     kP     ki      kD
     // 000.000;000.000;000.000
-    if(valorRecebido == "estado_a" || valorRecebido == "Cliente Conectado!"){
+    if(valorRecebido == "estado_a" || valorRecebido == "Cliente Conectado!" || valorRecebido == "Cliente Desconectado!"){
       // Serial.println(valorRecebido);
+      SerialBT.println(valorRecebido);
+    }
+    else if(valorRecebido == "ok"){
       SerialBT.println(valorRecebido);
     }
     else{
@@ -53,7 +56,7 @@ void loop() {
       Serial.print(kI, 6);
       Serial.print(" | ");
       Serial.println(kD, 6);
-      SerialBT.println("PID recebido vlw men");
+      SerialBT.println(kP);
 
     }
   }
