@@ -5,24 +5,36 @@
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
+#define AIN1 5
+#define AIN2 18
+#define PWMA 19
+#define STBY 21
+
 BluetoothSerial SerialBT;
 String valorRecebido;
 
 
-int ledVermelho =  26;
-int ledAmarelo = 32;
+// int ledVermelho =  26;
+// int ledAmarelo = 32;
 
 void setup() {
   Serial.begin(9600);
   SerialBT.begin("esp32-teste");
   Serial.println("Pronto para pareamento!");
 
+  pinMode(STBY, OUTPUT);
+  pinMode(PWMA, OUTPUT);
+  pinMode(AIN1, OUTPUT);
+  pinMode(AIN2, OUTPUT);
 
-  pinMode(ledVermelho, OUTPUT);
-  pinMode(ledAmarelo, OUTPUT);
+  digitalWrite(STBY, HIGH);
+  // pinMode(ledVermelho, OUTPUT);
+  // pinMode(ledAmarelo, OUTPUT);
 }
 
 void loop() {
+  int i;
+
   if (SerialBT.available()){
     valorRecebido = SerialBT.readString();
     Serial.println(valorRecebido);
@@ -60,4 +72,33 @@ void loop() {
 
     }
   }
+
+  digitalWrite(AIN1, HIGH);
+  digitalWrite(AIN2, LOW);
+
+  for(i=0;i<255;i++){
+    analogWrite(PWMA, i);
+    Serial.println(i);
+    delay(10);
+  }
+  for(i=255;i>0;i--){
+    analogWrite(PWMA, i);
+    Serial.println(i);
+    delay(10);
+  }
+
+  digitalWrite(AIN1, LOW);
+  digitalWrite(AIN2, HIGH);
+  
+  for(i=0;i<255;i++){
+    analogWrite(PWMA, i);
+    Serial.println(i);
+    delay(10);
+  }
+  for(i=255;i>0;i--){
+    analogWrite(PWMA, i);
+    Serial.println(i);
+    delay(10);
+  }
+
 }
