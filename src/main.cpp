@@ -5,6 +5,8 @@
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
+
+#define PINLED 2
 #define AIN1 5
 #define AIN2 18
 #define PWMA 19
@@ -26,6 +28,7 @@ void setup() {
   pinMode(PWMA, OUTPUT);
   pinMode(AIN1, OUTPUT);
   pinMode(AIN2, OUTPUT);
+  pinMode(PINLED, OUTPUT);
 
   digitalWrite(STBY, HIGH);
   // pinMode(ledVermelho, OUTPUT);
