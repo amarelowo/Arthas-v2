@@ -1,97 +1,31 @@
 #include <Arduino.h>
 #include <BluetoothSerial.h>
-
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
-
-// Pin
-#define PINLED 2
-
-// Pino motor 1
-#define AIN1 5
-#define AIN2 18
-#define PWMA 19
-
-// Pino stby ponte h
-#define STBY 21
-
-// Pino Encoder
-#define C1 26
-#define C2 27
-byte Encoder_C1Last;
-int duracao;
-boolean Direcao;
-
-
-
-
-
-
-BluetoothSerial SerialBT;
-String data;
-
-
-// int ledVermelho =  26;
-// int ledAmarelo = 32;
-
-
-void updateEncoder(){
-  int Lstate = digitalRead(C1);
-  if ((Encoder_C1Last == LOW) && Lstate == HIGH){
-    int val = digitalRead(C2);
-    if (val == LOW && Direcao){
-      Direcao = false; //Reverse
-    }
-    else if (val == HIGH && !Direcao){
-      Direcao = true;  //Forward
-    }
-  }
-  Encoder_C1Last = Lstate;
-  if (!Direcao)  duracao++;
-  else  duracao--;
-}
+#include <SparkFun_TB6612.h>
+#include <QTRSensors.h>
+#include <BluetoohManeger.h>
+#include <GeneralFunctions.h>
 
 void setup() {
   Serial.begin(9600);
-  SerialBT.begin("esp32-teste");
-  Serial.println("Pronto para pareamento!");
 
-  pinMode(STBY, OUTPUT);
-  pinMode(PWMA, OUTPUT);
-  pinMode(AIN1, OUTPUT);
-  pinMode(AIN2, OUTPUT);
-  pinMode(PINLED, OUTPUT);
-
-
-  pinMode(C1, INPUT);
-  pinMode(C2, INPUT_PULLUP);
-
-  // digitalWrite(C1, HIGH);
-  // digitalWrite(C2, HIGH);
-
-  attachInterrupt(C1,updateEncoder, CHANGE);
-  // attachInterrupt(digitalPinToInterrupt(C2),updateEncoder, CHANGE);
-
-  digitalWrite(STBY, HIGH);
-  // pinMode(ledVermelho, OUTPUT);
-  // pinMode(ledAmarelo, OUTPUT);
+  setupBT();
+  setupSensoresLaterais();
 }
 
 void loop() {
-  int i;
-
+  // Aguarda comandos do BT
   if (SerialBT.available()){
     data = SerialBT.readString();
     Serial.println(data);
     
     if(data == "a"){
-      for(i=0;i<5;i++){
       SerialBT.print("Estado de calibração iniciando");
-      }
+      calibrar();
     }
     else if(data == "b"){
       SerialBT.print("Iniciando percurso");
+      motor1.drive(100);
+      motor2.drive(100);
     }
     else if(data == "c"){
       SerialBT.print("Modo Standby");
@@ -133,36 +67,4 @@ void loop() {
       
     }
   }
-
-  // digitalWrite(AIN1, HIGH);
-  // digitalWrite(AIN2, LOW);
-
-  // for(i=0;i<255;i++){
-  //   analogWrite(PWMA, i);
-  //   Serial.println(duracao);
-  //   delay(30);
-  // }
-  // for(i=255;i>0;i--){
-  //   analogWrite(PWMA, i);
-  //   Serial.println(duracao);
-  //   delay(30);
-  // }
-  // digitalWrite(AIN1, LOW);
-  // digitalWrite(AIN2, HIGH);
-
-  // for(i=0;i<255;i++){
-  //   analogWrite(PWMA, i);
-  //   Serial.println(duracao);
-  //   delay(30);
-  // }
-  // for(i=255;i>0;i--){
-  //   analogWrite(PWMA, i);
-  //   Serial.println(duracao);
-  //   delay(30);
-  // }
-  
-  // delay(100);
-
-
-
 }
