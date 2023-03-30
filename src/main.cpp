@@ -28,7 +28,7 @@ void loop() {
       SerialBT.print("Iniciando percurso");
       motor1.drive(100);
       motor2.drive(255);
-      runningTrack();
+      // runningTrack();
     }
     else if(data == "c"){
       SerialBT.print("Modo Standby");
