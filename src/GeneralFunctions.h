@@ -25,8 +25,8 @@ Motor motor1 = Motor(BIN1, BIN2, PWMB, 1, STBY);
 
 // Sensor de linha
 QTRSensors qtr;
-const uint8_t SensorCount = 8;
-// const uint16_t sensorValues[SensorCount];
+const uint8_t SensorCount = 2;
+uint16_t sensorValues[SensorCount];
 
 // Variaveis
 bool noSensor = false;
@@ -38,7 +38,7 @@ double tempoParada;
 
 void calibrar(){  
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){ 34, 35, 32, 33, 25, 26, 27, 14}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]){32, 33}, SensorCount);
   qtr.setTimeout(1000);
 
   delay(1000);

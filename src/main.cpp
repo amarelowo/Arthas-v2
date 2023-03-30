@@ -10,6 +10,8 @@ void setup() {
 
   setupBT();
   setupSensoresLaterais();
+
+
 }
 
 void loop() {
@@ -25,10 +27,13 @@ void loop() {
     else if(data == "b"){
       SerialBT.print("Iniciando percurso");
       motor1.drive(100);
-      motor2.drive(100);
+      motor2.drive(255);
+      runningTrack();
     }
     else if(data == "c"){
       SerialBT.print("Modo Standby");
+      motor1.drive(0);
+      motor2.drive(0);
     }
     else if(data == "Cliente Conectado!" || data ==  "Cliente Desconectado!"){
       SerialBT.print(data);
