@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <SparkFun_TB6612.h>
 #include <QTRSensors.h>
-
+#include <PID.h>
 
 
 //Ponte H
@@ -20,13 +20,18 @@
 #define LED_BUILTIN 2
 
 // Motores
+#define velocidadeMaxima 180
 Motor motor2 = Motor(AIN1, AIN2, PWMA, 1, STBY);
 Motor motor1 = Motor(BIN1, BIN2, PWMB, 1, STBY);
 
 // Sensor de linha
 QTRSensors qtr;
-const uint8_t SensorCount = 2;
+const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
+
+// PID
+PID pid(0.098,0.160,0.000, 3500, 1);
+
 
 // Variaveis
 bool noSensor = false;
@@ -70,8 +75,10 @@ void setupSensoresLaterais(){
     pinMode(SENSORFIM, INPUT);
 }
 
-void verifica_chegada()//A gente já chegou? Função aplicada ao fim do laço loop que parará o seguidor caso encontre o indicativo de término de percurso
+bool verifica_chegada()//A gente já chegou? Função aplicada ao fim do laço loop que parará o seguidor caso encontre o indicativo de término de percurso
 {
+  bool verificador;
+
   int chegada = digitalRead(SENSORFIM);
   if(chegada == 1){
     if(noSensor == false){
@@ -94,8 +101,21 @@ void verifica_chegada()//A gente já chegou? Função aplicada ao fim do laço l
 
   if(leiturasBorda >= 11 && (tempoAntes - tempo) >= 500)
   {
-    motor1.drive(0);
-    motor2.drive(0);
-    delay(100000);
+    verificador = true;
+  }
+  else{verificador = false;}
+
+
+  return verificador;
+
+}
+
+void runningTrack(){
+  while(!verifica_chegada()){
+    double correcao = pid.process(qtr.readLineWhite(sensorValues));
+
+    motor2.drive(constrain(velocidadeMaxima + correcao, 0, velocidadeMaxima));
+    motor1.drive(constrain(velocidadeMaxima - correcao, 0, velocidadeMaxima));
+
   }
 }
