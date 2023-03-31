@@ -3,6 +3,7 @@
 #include <SparkFun_TB6612.h>
 #include <QTRSensors.h>
 #include <GeneralFunctions.h>
+#include <PID.h>
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -10,11 +11,13 @@
 
 BluetoothSerial SerialBT;
 
+int maxSpeed = 180;
+
 void setup() {
   Serial.begin(9600);
   SerialBT.begin("ArthasBT");
 
-
+  // seta os pinos dos sensores laterais AINDA ESTA SEM O DE CURVA
   setupSensoresLaterais();
 }
 
@@ -30,7 +33,8 @@ void loop() {
     }
     else if(data == "b"){
       SerialBT.print("Iniciando percurso");
-      runningTrack();
+      // COMECA O PERCURSO COM A VELOCIDADE ESTABELECIDA NO APP OU COM A PADRAO QUE É 180
+      runningTrack(maxSpeed);
     }
     else if(data == "c"){
       SerialBT.print("Modo Standby");
@@ -58,9 +62,9 @@ void loop() {
       String rawSpeed = data.substring(26,29);
       int speed = rawSpeed.toInt();
 
-      // Prova pra ver se o numero ta virando numero de fato
-      Serial.print("Soma: ");
-      Serial.println(kP+kI+kD+speed);
+      // Atualiza os parametros de pid e a velocidade
+      pid.atualizarPID(kP,kI,kD);
+      maxSpeed = speed; 
 
       // Printa na serial do bt
       SerialBT.print("Kp: ");

@@ -20,7 +20,6 @@
 #define LED_BUILTIN 2
 
 // Motores
-#define velocidadeMaxima 180
 Motor motor2 = Motor(AIN1, AIN2, PWMA, 1, STBY);
 Motor motor1 = Motor(BIN1, BIN2, PWMB, 1, STBY);
 
@@ -30,7 +29,7 @@ const uint8_t SensorCount = 8;
 uint16_t sensorValues[SensorCount];
 
 // PID
-PID pid(0.098,0.160,0.000, 3500, 1);
+PID pid(0.098,0.00,0.160, 3500, 1);
 
 
 // Variaveis
@@ -43,7 +42,7 @@ double tempoParada;
 
 void calibrar(){  
   qtr.setTypeAnalog();
-  qtr.setSensorPins((const uint8_t[]){32, 33}, SensorCount);
+  qtr.setSensorPins((const uint8_t[]){34,35,32, 33,25,26,27,14}, SensorCount);
   qtr.setTimeout(1000);
 
   delay(1000);
@@ -110,12 +109,19 @@ bool verifica_chegada()//A gente já chegou? Função aplicada ao fim do laço l
 
 }
 
-void runningTrack(){
+void runningTrack(int velocidadeMaxima){
   while(!verifica_chegada()){
+
+    // manda a leitura do QTR pro processamento do pid
     double correcao = pid.process(qtr.readLineWhite(sensorValues));
 
-    motor2.drive(constrain(velocidadeMaxima + correcao, 0, velocidadeMaxima));
-    motor1.drive(constrain(velocidadeMaxima - correcao, 0, velocidadeMaxima));
+    // Printa os valores de P, I, D e a soma "PID" na serial
+    Serial.println(pid.pidString());
 
+    motor2.drive(constrain(velocidadeMaxima - correcao, 0, velocidadeMaxima));
+    motor1.drive(constrain(velocidadeMaxima + correcao, 0, velocidadeMaxima));
+
+
+  
   }
 }
